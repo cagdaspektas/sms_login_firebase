@@ -54,6 +54,14 @@ mixin _$AuthScreenViewModel on _AuthScreenViewModelBase, Store {
     return _$submitPhoneNumberAsyncAction.run(() => super.submitPhoneNumber());
   }
 
+  final _$submitOTPAsyncAction =
+      AsyncAction('_AuthScreenViewModelBase.submitOTP');
+
+  @override
+  Future<void> submitOTP() {
+    return _$submitOTPAsyncAction.run(() => super.submitOTP());
+  }
+
   final _$loginAsyncAction = AsyncAction('_AuthScreenViewModelBase.login');
 
   @override
@@ -81,17 +89,6 @@ mixin _$AuthScreenViewModel on _AuthScreenViewModelBase, Store {
         name: '_AuthScreenViewModelBase.handleError');
     try {
       return super.handleError(e);
-    } finally {
-      _$_AuthScreenViewModelBaseActionController.endAction(_$actionInfo);
-    }
-  }
-
-  @override
-  void submitOTP() {
-    final _$actionInfo = _$_AuthScreenViewModelBaseActionController.startAction(
-        name: '_AuthScreenViewModelBase.submitOTP');
-    try {
-      return super.submitOTP();
     } finally {
       _$_AuthScreenViewModelBaseActionController.endAction(_$actionInfo);
     }

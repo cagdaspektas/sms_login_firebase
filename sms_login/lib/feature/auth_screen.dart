@@ -190,7 +190,6 @@ class _AuthScreenState extends State<AuthScreen> {
         ),
         body: ListView(
           padding: EdgeInsets.all(16),
-          // mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             SizedBox(height: 24),
             Row(

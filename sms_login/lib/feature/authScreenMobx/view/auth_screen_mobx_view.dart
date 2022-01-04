@@ -48,17 +48,16 @@ class AuthScreenViewMobx extends StatelessWidget {
                         ),
                         Spacer(),
                         Expanded(
-                          flex: 1,
-                          child: MaterialButton(
-                            onPressed: () {
-                              model.submitPhoneNumber();
-                              model.isSubmit = true;
-                              model.countDown();
-                            },
-                            child: Text('Submit'),
-                            color: Theme.of(context).accentColor,
-                          ),
-                        ),
+                            flex: 1,
+                            child: MaterialButton(
+                              onPressed: () {
+                                model.submitPhoneNumber();
+                                model.isSubmit = true;
+                                model.countDown();
+                              },
+                              child: Text('Submit'),
+                              color: Theme.of(context).accentColor,
+                            )),
                       ],
                     ),
                     SizedBox(height: 48),
@@ -85,7 +84,9 @@ class AuthScreenViewMobx extends StatelessWidget {
                               Expanded(
                                 flex: 1,
                                 child: MaterialButton(
-                                  onPressed: model.submitOTP,
+                                  onPressed: () {
+                                    model.submitOTP();
+                                  },
                                   child: Text('Submit'),
                                   color: Theme.of(context).accentColor,
                                 ),
@@ -93,9 +94,11 @@ class AuthScreenViewMobx extends StatelessWidget {
                             ],
                           )
                         : const SizedBox(),
-                    Text('$model.status'),
+                    Text('${model.status}'),
                     MaterialButton(
-                      onPressed: model.logout,
+                      onPressed: () {
+                        model.logout();
+                      },
                       child: Text('Logout'),
                       color: Theme.of(context).accentColor,
                     ),

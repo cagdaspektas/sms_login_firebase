@@ -18,14 +18,13 @@ abstract class _AuthScreenViewModelBase with Store, BaseViewModel {
   @override
   void setContext(BuildContext context) => this.context = context;
 
-  final TextEditingController phoneNumberController = TextEditingController();
-  final TextEditingController otpController = TextEditingController();
+  TextEditingController phoneNumberController = TextEditingController();
+  TextEditingController otpController = TextEditingController();
   @observable
   String status = '';
   @observable
   bool isSubmit = false;
-
-  AuthCredential? phoneAuthCredential;
+  AuthCredential? phoneAuth;
   String? verificationId;
   int? code;
   CountdownTimerController? controler;
@@ -74,20 +73,18 @@ abstract class _AuthScreenViewModelBase with Store, BaseViewModel {
 
   @action
   Future<void> submitPhoneNumber() async {
-    /// NOTE: Either append your phone number country code or add in the code itself
-    /// Since I'm in India we use "+91 " as prefix `phoneNumber`
     String phoneNumber = "+90" + phoneNumberController.text.toString().trim();
     print(phoneNumber);
 
-    @action
-
     /// The below functions are the callbacks, separated so as to make code more redable
+
+    @action
     void verificationCompleted(AuthCredential phoneAuthCredential) {
       print('verificationCompleted');
 
       status += 'verificationCompleted\n';
 
-      this.phoneAuthCredential = phoneAuthCredential;
+      phoneAuth = phoneAuthCredential;
       print(phoneAuthCredential);
     }
 
@@ -98,22 +95,21 @@ abstract class _AuthScreenViewModelBase with Store, BaseViewModel {
     }
 
     @action
-    void codeSent(String verificationId, [int? code]) {
+    void codeSent(String verificationIdnew, [int? code]) {
       print('codeSent');
-      verificationId = verificationId;
+      verificationId = verificationIdnew;
       print(verificationId);
       code = code;
       print(code.toString());
       status += 'Code Sent\n';
     }
 
-    @action
-    void codeAutoRetrievalTimeout(String verificationId) {
+    void codeAutoRetrievalTimeout(String verificationIdnew) {
       print('codeAutoRetrievalTimeout');
 
       status += 'codeAutoRetrievalTimeout\n';
 
-      print(verificationId);
+      print(verificationIdnew);
     }
 
     await FirebaseAuth.instance.verifyPhoneNumber(
@@ -140,15 +136,16 @@ abstract class _AuthScreenViewModelBase with Store, BaseViewModel {
   }
 
   @action
-  void submitOTP() {
+  Future<void> submitOTP() async {
     /// get the `smsCode` from the user
     String smsCode = otpController.text.toString().trim();
+    print(smsCode);
 
     /// when used different phoneNumber other than the current (running) device
     /// we need to use OTP to get `phoneAuthCredential` which is inturn used to signIn/login
-    phoneAuthCredential = PhoneAuthProvider.credential(verificationId: verificationId ?? '', smsCode: smsCode);
-
-    login();
+    phoneAuth = PhoneAuthProvider.credential(verificationId: verificationId ?? '', smsCode: smsCode);
+    Future.delayed(Duration(seconds: 5));
+    await login();
   }
 
   @action
@@ -170,14 +167,18 @@ abstract class _AuthScreenViewModelBase with Store, BaseViewModel {
   ///    Else if user provided SIM phoneNumber is in the device running the app,
   ///       We can signIn without the OTP.
   ///       because the `verificationCompleted` callback gives the `AuthCredential`(`phoneAuthCredential`) needed to signIn
-
   @action
   Future<void> login() async {
     /// This method is used to login the user
     /// `AuthCredential`(`phoneAuthCredential`) is needed for the signIn method
     /// After the signIn method from `AuthResult` we can get `FirebaserUser`(`_firebaseUser`)
 
-    await FirebaseAuth.instance.signInWithCredential(phoneAuthCredential!);
+    print(phoneAuth);
+    if (phoneAuth != null) {
+      await FirebaseAuth.instance.signInWithCredential(phoneAuth!);
+    } else {
+      print("authcredential false");
+    }
 
     status += 'Signed In\n';
   }
