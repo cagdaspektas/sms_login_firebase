@@ -66,18 +66,17 @@ abstract class _AuthScreenViewModelBase with Store, BaseViewModel {
 
   @action
   Future<void> logout() async {
-    /// Method to Logout the `FirebaseUser` (`_firebaseUser`)
-    // signout code
+    //Logout method for signout firebase
     await FirebaseAuth.instance.signOut();
   }
 
   @action
   Future<void> submitPhoneNumber() async {
-    String phoneNumber = "+90" + phoneNumberController.text.toString().trim();
+    ///we are using +90 because of turkey code.
+    String phoneNumber = "+90" + phoneNumberController.text;
     print(phoneNumber);
 
-    /// The below functions are the callbacks, separated so as to make code more redable
-
+    ///Automatic handling of the SMS code on  devices
     @action
     void verificationCompleted(AuthCredential phoneAuthCredential) {
       print('verificationCompleted');
@@ -88,12 +87,14 @@ abstract class _AuthScreenViewModelBase with Store, BaseViewModel {
       print(phoneAuthCredential);
     }
 
+    ///Handle failure events such as invalid phone numbers or whether the SMS quota has been exceeded.
     @action
     void verificationFailed(FirebaseAuthException error) {
       print('verificationFailed');
       handleError(error);
     }
 
+//Handle when a code has been sent to the device from Firebase, used to prompt users to enter the code.
     @action
     void codeSent(String verificationIdnew, [int? code]) {
       print('codeSent');
@@ -103,6 +104,7 @@ abstract class _AuthScreenViewModelBase with Store, BaseViewModel {
       print(code.toString());
       status += 'Code Sent\n';
     }
+    // Handle a timeout of when automatic SMS code handling fails.
 
     void codeAutoRetrievalTimeout(String verificationIdnew) {
       print('codeAutoRetrievalTimeout');
@@ -113,38 +115,40 @@ abstract class _AuthScreenViewModelBase with Store, BaseViewModel {
     }
 
     await FirebaseAuth.instance.verifyPhoneNumber(
-      /// Make sure to prefix with your country code
+      //this part is about your phoneNumber which will be sent to sms.
       phoneNumber: phoneNumber,
-
-      /// `seconds` didn't work. The underlying implementation code only reads in `millisenconds`
+//the part of respond sms time.If you try after 120 sec u need to send the code again
       timeout: const Duration(seconds: 120),
 
-      /// If the SIM (with phoneNumber) is in the current device this function is called.
-      /// This function gives `AuthCredential`. Moreover `login` function can be called from this callback
-      /// When this function is called there is no need to enter the OTP, you can click on Login button to sigin directly as the device is now verified
+      ///When the SMS code is delivered to the device, Android will automatically verify the SMS code without
+      ///requiring the user to manually input the code also we can use login method in here.
       verificationCompleted: verificationCompleted,
 
-      /// Called when the verification is failed
+      ///If Firebase returns an error, for example for an incorrect phone number or if the SMS quota for the project has exceeded,
+      /// a FirebaseAuthException will be sent to this handler.
       verificationFailed: verificationFailed,
 
-      /// This is called after the OTP is sent. Gives a `verificationId` and `code`
+      /// this method comes after phone submit.And waits for the otp. Gives a `verificationId` and `code`
       codeSent: codeSent,
 
-      /// After automatic code retrival `tmeout` this function is called
+      ///On Android devices which support automatic SMS code resolution,
+      ///this handler will be called if the device has not automatically resolved an SMS message within a certain timeframe.
+      /// Once the timeframe has passed,
+      /// the device will no longer attempt to resolve any incoming messages.
       codeAutoRetrievalTimeout: codeAutoRetrievalTimeout,
-    ); // All the callbacks are above
+    );
   }
 
   @action
   Future<void> submitOTP() async {
-    /// get the `smsCode` from the user
+    /// we are getting code from user here
     String smsCode = otpController.text.toString().trim();
     print(smsCode);
 
-    /// when used different phoneNumber other than the current (running) device
-    /// we need to use OTP to get `phoneAuthCredential` which is inturn used to signIn/login
+    /// when we use other number from the current phone number we need to use this method.
+    /// we need phoneAuthcredential to signin/login
     phoneAuth = PhoneAuthProvider.credential(verificationId: verificationId ?? '', smsCode: smsCode);
-    Future.delayed(Duration(seconds: 5));
+    Future.delayed(const Duration(seconds: 5));
     await login();
   }
 
@@ -155,23 +159,10 @@ abstract class _AuthScreenViewModelBase with Store, BaseViewModel {
     status = "";
   }
 
-  /// phoneAuthentication works this way:
-  ///     AuthCredential is the only thing that is used to authenticate the user
-  ///     OTP is only used to get AuthCrendential after which we need to authenticate with that AuthCredential
-  ///
-  /// 1. User gives the phoneNumber
-  /// 2. Firebase sends OTP if no errors occur
-  /// 3. If the phoneNumber is not in the device running the app
-  ///       We have to first ask the OTP and get `AuthCredential`(`phoneAuthCredential`)
-  ///       Next we can use that `AuthCredential` to signIn
-  ///    Else if user provided SIM phoneNumber is in the device running the app,
-  ///       We can signIn without the OTP.
-  ///       because the `verificationCompleted` callback gives the `AuthCredential`(`phoneAuthCredential`) needed to signIn
   @action
   Future<void> login() async {
-    /// This method is used to login the user
-    /// `AuthCredential`(`phoneAuthCredential`) is needed for the signIn method
-    /// After the signIn method from `AuthResult` we can get `FirebaserUser`(`_firebaseUser`)
+    /// this method for the login the user
+    /// phoneAuthCredential is needed for signIn Method
 
     print(phoneAuth);
     if (phoneAuth != null) {
