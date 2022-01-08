@@ -23,15 +23,7 @@ class AuthScreenViewMobx extends StatelessWidget {
       },
       builder: (BuildContext context, AuthScreenViewModel model) {
         return Scaffold(
-            appBar: AppBar(
-              title: Text(TextEnum.phoneAuth.rawValue()),
-              actions: [
-                GestureDetector(
-                  child: const Icon(Icons.refresh),
-                  onTap: model.reset,
-                ),
-              ],
-            ),
+            appBar: _appBar(model),
             body: Observer(
               builder: (_) {
                 return ListView(
@@ -40,29 +32,9 @@ class AuthScreenViewMobx extends StatelessWidget {
                     const SizedBox(height: _sizedHeight),
                     Row(
                       children: <Widget>[
-                        Expanded(
-                          flex: _flex,
-                          child: TextField(
-                            controller: model.phoneNumberController,
-                            keyboardType: TextInputType.number,
-                            decoration: InputDecoration(
-                              hintText: TextEnum.phoneNumber.rawValue(),
-                              border: const OutlineInputBorder(),
-                            ),
-                          ),
-                        ),
+                        _phoneTextForm(model),
                         const Spacer(),
-                        Expanded(
-                            flex: 1,
-                            child: MaterialButton(
-                              onPressed: () {
-                                model.submitPhoneNumber();
-                                model.isSubmit = true;
-                                model.countDown();
-                              },
-                              child: Text(TextEnum.approve.rawValue()),
-                              color: Theme.of(context).primaryColor,
-                            )),
+                        _submitPhone(model, context),
                       ],
                     ),
                     const SizedBox(height: _sizedHeight),
@@ -74,44 +46,96 @@ class AuthScreenViewMobx extends StatelessWidget {
                     model.isSubmit
                         ? Row(
                             children: <Widget>[
-                              Expanded(
-                                flex: 2,
-                                child: TextField(
-                                  controller: model.otpController,
-                                  keyboardType: TextInputType.number,
-                                  decoration: InputDecoration(
-                                    hintText: TextEnum.smsCode.rawValue(),
-                                    border: const OutlineInputBorder(),
-                                  ),
-                                ),
-                              ),
+                              _smsTextForm(model),
                               const Spacer(),
-                              Expanded(
-                                flex: 1,
-                                child: MaterialButton(
-                                  onPressed: () {
-                                    model.submitOTP();
-                                  },
-                                  child: Text(TextEnum.approve.rawValue()),
-                                  color: Theme.of(context).primaryColor,
-                                ),
-                              ),
+                              _submitOtp(model, context),
                             ],
                           )
                         : const SizedBox(),
                     Text(model.status),
-                    MaterialButton(
-                      onPressed: () {
-                        model.logout();
-                      },
-                      child: Text(TextEnum.logOut.rawValue()),
-                      color: Theme.of(context).primaryColor,
-                    ),
+                    _logOut(model, context),
                   ],
                 );
               },
             ));
       },
+    );
+  }
+
+  Expanded _phoneTextForm(AuthScreenViewModel model) {
+    return Expanded(
+      flex: _flex,
+      child: TextField(
+        controller: model.phoneNumberController,
+        keyboardType: TextInputType.number,
+        decoration: InputDecoration(
+          hintText: TextEnum.phoneNumber.rawValue(),
+          border: const OutlineInputBorder(),
+        ),
+      ),
+    );
+  }
+
+  Expanded _submitPhone(AuthScreenViewModel model, BuildContext context) {
+    return Expanded(
+        flex: 1,
+        child: MaterialButton(
+          onPressed: () {
+            model.submitPhoneNumber();
+            model.isSubmit = true;
+            model.countDown();
+          },
+          child: Text(TextEnum.approve.rawValue()),
+          color: Theme.of(context).primaryColor,
+        ));
+  }
+
+  Expanded _smsTextForm(AuthScreenViewModel model) {
+    return Expanded(
+      flex: 2,
+      child: TextField(
+        controller: model.otpController,
+        keyboardType: TextInputType.number,
+        decoration: InputDecoration(
+          hintText: TextEnum.smsCode.rawValue(),
+          border: const OutlineInputBorder(),
+        ),
+      ),
+    );
+  }
+
+  Expanded _submitOtp(AuthScreenViewModel model, BuildContext context) {
+    return Expanded(
+      flex: 1,
+      child: MaterialButton(
+        onPressed: () {
+          model.submitOTP();
+        },
+        child: Text(TextEnum.approve.rawValue()),
+        color: Theme.of(context).primaryColor,
+      ),
+    );
+  }
+
+  MaterialButton _logOut(AuthScreenViewModel model, BuildContext context) {
+    return MaterialButton(
+      onPressed: () {
+        model.logout();
+      },
+      child: Text(TextEnum.logOut.rawValue()),
+      color: Theme.of(context).primaryColor,
+    );
+  }
+
+  AppBar _appBar(AuthScreenViewModel model) {
+    return AppBar(
+      title: Text(TextEnum.phoneAuth.rawValue()),
+      actions: [
+        GestureDetector(
+          child: const Icon(Icons.refresh),
+          onTap: model.reset,
+        ),
+      ],
     );
   }
 }
