@@ -7,6 +7,10 @@ import 'package:sms_login/feature/authScreenMobx/viewModel/auth_screen_view_mode
 import 'package:sms_login/product/widget/countdown_widget.dart';
 
 class AuthScreenViewMobx extends StatelessWidget {
+  static const double _ltbPadding = 16;
+  static const double _sizedHeight = 12;
+  static const int _flex = 2;
+
   const AuthScreenViewMobx({Key? key}) : super(key: key);
 
   @override
@@ -31,13 +35,13 @@ class AuthScreenViewMobx extends StatelessWidget {
             body: Observer(
               builder: (_) {
                 return ListView(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(_ltbPadding),
                   children: <Widget>[
-                    const SizedBox(height: 12),
+                    const SizedBox(height: _sizedHeight),
                     Row(
                       children: <Widget>[
                         Expanded(
-                          flex: 2,
+                          flex: _flex,
                           child: TextField(
                             controller: model.phoneNumberController,
                             keyboardType: TextInputType.number,
@@ -61,7 +65,7 @@ class AuthScreenViewMobx extends StatelessWidget {
                             )),
                       ],
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: _sizedHeight),
                     model.isSubmit
                         ? CountDownTimerWidget(
                             controller: model.controler,
