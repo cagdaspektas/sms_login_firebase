@@ -102,7 +102,7 @@ abstract class _AuthScreenViewModelBase with Store, BaseViewModel {
       print(verificationId);
       code = code;
       print(code.toString());
-      status += 'Code Sent\n';
+      status += 'Code Sent';
     }
     // Handle a timeout of when automatic SMS code handling fails.
 
@@ -120,21 +120,12 @@ abstract class _AuthScreenViewModelBase with Store, BaseViewModel {
 //the part of respond sms time.If you try after 120 sec u need to send the code again
       timeout: const Duration(seconds: 120),
 
-      ///When the SMS code is delivered to the device, Android will automatically verify the SMS code without
-      ///requiring the user to manually input the code also we can use login method in here.
       verificationCompleted: verificationCompleted,
 
-      ///If Firebase returns an error, for example for an incorrect phone number or if the SMS quota for the project has exceeded,
-      /// a FirebaseAuthException will be sent to this handler.
       verificationFailed: verificationFailed,
 
-      /// this method comes after phone submit.And waits for the otp. Gives a `verificationId` and `code`
       codeSent: codeSent,
 
-      ///On Android devices which support automatic SMS code resolution,
-      ///this handler will be called if the device has not automatically resolved an SMS message within a certain timeframe.
-      /// Once the timeframe has passed,
-      /// the device will no longer attempt to resolve any incoming messages.
       codeAutoRetrievalTimeout: codeAutoRetrievalTimeout,
     );
   }
