@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:sms_login/core/constants/text_enum.dart';
-import 'package:sms_login/core/constants/text_values.dart';
-import 'package:sms_login/core/model/base_view.dart';
-import 'package:sms_login/feature/authScreenMobx/viewModel/auth_screen_view_model.dart';
-import 'package:sms_login/product/widget/countdown_widget.dart';
+
+import '../../../core/constants/text_enum.dart';
+import '../../../core/constants/text_values.dart';
+import '../../../core/model/base_view.dart';
+import '../../../product/widget/countdown_widget.dart';
+import '../viewModel/auth_screen_view_model.dart';
 
 class AuthScreenViewMobx extends StatelessWidget {
   static const double _ltbPadding = 16;

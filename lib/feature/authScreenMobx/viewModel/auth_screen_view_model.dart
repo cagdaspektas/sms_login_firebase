@@ -3,8 +3,10 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_countdown_timer/countdown_timer_controller.dart';
 import 'package:mobx/mobx.dart';
-import 'package:sms_login/core/model/base_view_model.dart';
-import 'package:sms_login/product/widget/showAlertDialog_widget.dart';
+
+import '../../../core/model/base_view_model.dart';
+import '../../../product/widget/showAlertDialog_widget.dart';
+
 part 'auth_screen_view_model.g.dart';
 
 class AuthScreenViewModel = _AuthScreenViewModelBase with _$AuthScreenViewModel;
